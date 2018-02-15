@@ -1,0 +1,122 @@
+<html>
+<head>
+<meta charset='utf-8'/>
+
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+
+<!--jquery ui layout-->
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+<!--<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>-->
+<script src="js/jquery-ui-1.9.1/ui/jquery-ui.js"></script>
+<!--<script src="http://layout.jquery-dev.net/lib/js/jquery.layout-latest.min.js"></script>-->
+<!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.1/themes/base/jquery-ui.css" />-->
+<link rel="stylesheet" href="js/jquery-ui-1.9.1/themes/base/jquery-ui.css" type="text/css" />
+
+<!--contextMenu-->
+<script src="js/jquery.contextMenu.min.js"></script>
+<link href="js/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
+
+
+
+
+<!--highlightText-->
+	<link type="text/css" href="js/jquery.highlighttext.css" rel="stylesheet" />	
+	<script type="text/javascript" src="js/jquery.highlighttextarea.js"></script>
+	
+
+
+<!--my own custom-->
+	<script type="text/javascript" src="js/textSqueeze/textSqueeze.js"></script>
+	<link type="text/css" href="js/textSqueeze/textSqueeze.css" rel="stylesheet" />
+
+
+<script type="text/javascript" src="js/wordcloud2.js"></script>
+
+<script>
+$(document).ready(function(){
+
+sqz.initialize("findSpace");
+
+
+
+});
+
+/**** SCRAPE ****/
+var phraseToInspect;
+function inspectFind(){
+	var phrase = $('input[name=context-menu-input-find]').val();	
+			
+	var phraseArray = phrase.split(",");
+	var hiColor = "#00FFFF";
+	hiliteWords(phraseArray,hiColor);
+	$('input[name=context-menu-input-find]').val(phrase);
+}
+		
+function hiliteWords(words,color){		
+		$("textarea").highlightTextarea({
+			words: words,
+			caseSensitive: false,
+			color: color
+		});				
+}
+		
+function inspectClear(){
+	
+	var phrase = $('input[name=context-menu-input-find]').val();				
+	var phraseArray = phrase.split(",");
+	var hiColor = "#FFFFFF";
+	
+	hiliteWords(phraseArray,hiColor);
+}
+
+
+
+function getWordCloud() {
+    
+console.log(JSON.stringify(wordFreqHashArray));
+    
+    WordCloud(document.getElementById('my_canvas'), { list: wordFreqHashArray } );
+}
+
+
+/**UTILITY**/
+function InArray(matchIn,arrayIn){
+	var res = -1;
+	$.each(arrayIn, function(index, value) { 
+		if (value.toLowerCase() == matchIn.toLowerCase()) {
+			res = index;
+			return false;
+		}
+	});
+	return res;
+}
+function getSelected() {
+	if(window.getSelection) { 
+		return window.getSelection(); 
+	}else if(document.getSelection) { 
+		return document.getSelection(); 
+	}else {
+		var selection = document.selection && document.selection.createRange();
+		if(selection.text) { 
+			return selection.text; 
+		}
+		return false;
+	}
+	return false;
+}
+</script>
+
+</head>
+<body>
+
+<div class="ui-layout-center page findSpace">
+
+
+
+
+</div>
+
+</body>
+<html>

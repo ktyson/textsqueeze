@@ -1,0 +1,58 @@
+textarea
+{
+    border:1px solid #999999;
+	width:400px;
+    margin:5px 0;
+    padding:3px;
+}
+#work{
+	margin:10px;
+}
+#sliderFreq{
+	margin-top:5px;
+	margin-bottom:5px;
+}
+#bucketDiv{
+
+}
+#controlDiv{
+
+}
+#showDivContainer{
+	
+}
+#showDiv{
+	overflow: auto;
+	height:60%;
+}
+.word{
+	font-family:Arial;
+}
+.word.commonWords{
+	display:none;
+
+}
+.word.basicAdjectives{
+	display:none;
+
+}
+.word.adverbs{
+	display:none;
+
+}
+.word.helpingVerbs{
+	display:none;
+
+}
+.word.pronouns{
+	display:none;
+
+}
+.word.prepositions{
+	display:none;
+
+}
+.word.numberlike{
+	display:none;
+
+}
