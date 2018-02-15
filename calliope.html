@@ -1,0 +1,664 @@
+<html>
+<head>
+    
+    <script src="jslib/jquery/jquery-1.4.2.min.js"></script>
+    <script src="jslib/jquery/jquery.ui.all.js"></script>
+    <script src="jslib/jquery/raphael.js"></script>
+    
+    
+    
+    <script>   
+    
+        //globals 2
+        /*   
+          var paper = {}; //Raphael canvas
+          var scale = 1.0;
+          var init = true;
+          var blocks = {}; //any subunit of a work (para, sent, word)
+          var Blocks = []; //a collection of displayable rectangles representing blocks
+          var workingText = "";
+          var workingScale = 0;
+          var scaleSet = {
+            initial : 0,
+            final : 0,
+            step : 0,
+            msecs : 1000    
+          };
+          var keySet = {
+            locations : [],
+            offset : 0
+          };
+          var drawEnv = {
+            totalWidth : 500, //getClientCoords().w - 50
+            charWidth : Math.floor(7 * scale),     
+            lineHeight : Math.floor(14 * scale),
+            lineBreak : Math.floor(7 * scale),      
+            wordSpace : Math.floor(7 * scale) 
+          };
+*/
+        
+          //globals 3
+        /* */
+  var paper = {}; //Raphael canvas
+  var scale = 1.0;
+  var init = true;
+  var blocks = {}; //any subunit of a work (para, sent, word)
+  var Blocks = []; //a collection of displayable rectangles representing blocks
+  var drawEnv = {}; //set dimensions
+  
+  var workingText;
+  var textArray = [];
+  var words = [];
+  
+  var currPos = 0;
+  var currRadius = 0;
+  var currRadiusMin = 0;
+  var currRadiusMax = 0;
+  var currDepth = 0;
+  var currDepthMin = 0;
+  var currDepthMax = 0;
+ 
+        
+          //globals 0/1
+        /*
+  var init = true;
+  var workingText = "";
+  var workingScale = 0;
+  var scaleSet = {
+    initial : 0,
+    final : 0,
+    step : 0,
+    msecs : 1000    
+  };
+  var keySet = {
+    locations : [],
+    offset : 0
+  };
+        */
+        
+        var workObject = {'stuff' : [{'work':'Passage from Fennimore Cooper, by Mark Twain','content' : 'There have been daring people in the world who claimed that Cooper could write English, but they are all dead now -- all dead but Lounsbury. I don\'t remember that Lounsbury makes the claim in so many words, still he makes it, for he says that \"Deerslayer\" is a \"pure work of art.\" Pure, in that connection, means faultless -- faultless in all details -- and language is a detail. If Mr. Lounsbury had only compared Cooper\'s English with the English he writes himself -- but it is plain that he didn\'t; and so it is likely that he imagines until this day that Cooper\'s is as clean and compact as his own. Now I feel sure, deep down in my heart, that Cooper wrote about the poorest English that exists in our language, and that the English of \"Deerslayer\" is the very worst that even Cooper ever wrote.\n\nI may be mistaken, but it does seem to me that \"Deerslayer\" is not a work of art in any sense; it does seem to me that it is destitute of every detail that goes to the making of a work of art; in truth, it seems to me that \"Deerslayer\" is just simply a literary delirium tremens.\n\nA work of art? It has no invention; it has no order, system, sequence, or result; it has no lifelikeness, no thrill, no stir, no seeming of reality; its characters are confusedly drawn, and by their acts and words they prove that they are not the sort of people the author claims that they are; its humor is pathetic; its pathos is funny; its conversations are -- oh! indescribable; its love-scenes odious; its English a crime against the language.\n\nCounting these out, what is left is Art. I think we must all admit that.\n'},
+  {'work':'Categories from Organon, by Aristotle','content':'Categories\n\n1\n\nThings are said to be named \'equivocally\' when, though they have a common name, the definition corresponding with the name differs for each. Thus, a real man and a figure in a picture can both lay claim to the name \'animal\'; yet these are equivocally so named, for, though they have a common name, the definition corresponding with the name differs for each. For should any one define in what sense each is an animal, his definition in the one case will be appropriate to that case only.\nOn the other hand, things are said to be named \'univocally\' which have both the name and the definition answering to the name in common. A man and an ox are both \'animal\', and these are univocally so named, inasmuch as not only the name, but also the definition, is the same in both cases: for if a man should state in what sense each is an animal, the statement in the one case would be identical with that in the other.\nThings are said to be named \'derivatively\', which derive their name from some other name, but differ from it in termination. Thus the grammarian derives his name from the word \'grammar\', and the courageous man from the word \'courage\'.\n2\n\nForms of speech are either simple or composite. Examples of the latter are such expressions as \'the man runs\', \'the man wins\'; of the former \'man\', \'ox\', \'runs\', \'wins\'.\nOf things themselves some are predicable of a subject, and are never present in a subject. Thus \'man\' is predicable of the individual man, and is never present in a subject.\nBy being \'present in a subject\' I do not mean present as parts are present in a whole, but being incapable of existence apart from the said subject.\nSome things, again, are present in a subject, but are never predicable of a subject. For instance, a certain point of grammatical knowledge is present in the mind, but is not predicable of any subject; or again, a certain whiteness may be present in the body (for colour requires a material basis), yet it is never predicable of anything.\nOther things, again, are both predicable of a subject and present in a subject. Thus while knowledge is present in the human mind, it is predicable of grammar.\nThere is, lastly, a class of things which are neither present in a subject nor predicable of a subject, such as the individual man or the individual horse. But, to speak more generally, that which is individual and has the character of a unit is never predicable of a subject. Yet in some cases there is nothing to prevent such being present in a subject. Thus a certain point of grammatical knowledge is present in a subject.\n3\n\nWhen one thing is predicated of another, all that which is predicable of the predicate will be predicable also of the subject. Thus, \'man\' is predicated of the individual man; but \'animal\' is predicated of \'man\'; it will, therefore, be predicable of the individual man also: for the individual man is both \'man\' and \'animal\'.\nIf genera are different and co-ordinate, their differentiae are themselves different in kind. Take as an instance the genus \'animal\' and the genus \'knowledge\'. \'With feet\', \'two-footed\', \'winged\', \'aquatic\', are differentiae of \'animal\'; the species of knowledge are not distinguished by the same differentiae. One species of knowledge does not differ from another in being \'two-footed\'.\nBut where one genus is subordinate to another, there is nothing to prevent their having the same differentiae: for the greater class is predicated of the lesser, so that all the differentiae of the predicate will be differentiae also of the subject.\n4\n\nExpressions which are in no way composite signify substance, quantity, quality, relation, place, time, position, state, action, or affection. To sketch my meaning roughly, examples of substance are \'man\' or \'the horse\', of quantity, such terms as \'two cubits long\' or \'three cubits long\', of quality, such attributes as \'white\', \'grammatical\'. \'Double\', \'half\', \'greater\', fall under the category of relation; \'in a the market place\', \'in the Lyceum\', under that of place; \'yesterday\', \'last year\', under that of time. \'Lying\', \'sitting\', are terms indicating position, \'shod\', \'armed\', state; \'to lance\', \'to cauterize\', action; \'to be lanced\', \'to be cauterized\', affection.\n No one of these terms, in and by itself, involves an affirmation; it is by the combination of such terms that positive or negative statements arise. For every assertion must, as is admitted, be either true or false, whereas expressions which are not in any way composite such as \'man\', \'white\', \'runs\', \'wins\', cannot be either true or false.'},
+            {'work':'Notes from Underground by Fyodor Dostoevsky','content':'I am a sick man. ... I am a spiteful man. I am an unattractive man. I believe my liver is diseased. However, I know nothing at all about my disease, and do not know for certain what ails me. I don\'t consult a doctor for it, and never have, though I have a respect for medicine and doctors. Besides, I am extremely superstitious, sufficiently so to respect medicine, anyway (I am well-educated enough not to be superstitious, but I am superstitious). No, I refuse to consult a doctor from spite. That you probably will not understand. Well, I understand it, though. Of course, I can\'t explain who it is precisely that I am mortifying in this case by my spite: I am perfectly well aware that I cannot \"pay out\" the doctors by not consulting them; I know better than anyone that by all this I am only injuring myself and no one else. But still, if I don\'t consult a doctor it is from spite. My liver is bad, well -- let it get worse!\n\nI have been going on like that for a long time -- twenty years. Now I am forty. I used to be in the government service, but am no longer. I was a spiteful official. I was rude and took pleasure in being so. I did not take bribes, you see, so I was bound to find a recompense in that, at least. (A poor jest, but I will not scratch it out. I wrote it thinking it would sound very witty; but now that I have seen myself that I only wanted to show off in a despicable way, I will not scratch it out on purpose!)\n\nWhen petitioners used to come for information to the table at which I sat, I used to grind my teeth at them, and felt intense enjoyment when I succeeded in making anybody unhappy. I almost did succeed. For the most part they were all timid people -- of course, they were petitioners. But of the uppish ones there was one officer in particular I could not endure. He simply would not be humble, and clanked his sword in a disgusting way. I carried on a feud with him for eighteen months over that sword. At last I got the better of him. He left off clanking it. That happened in my youth, though.\n\nBut do you know, gentlemen, what was the chief point about my spite? Why, the whole point, the real sting of it lay in the fact that continually, even in the moment of the acutest spleen, I was inwardly conscious with shame that I was not only not a spiteful but not even an embittered man, that I was simply scaring sparrows at random and amusing myself by it. I might foam at the mouth, but bring me a doll to play with, give me a cup of tea with sugar in it, and maybe I should be appeased. I might even be genuinely touched, though probably I should grind my teeth at myself afterwards and lie awake at night with shame for months after. That was my way.\n\nI was lying when I said just now that I was a spiteful official. I was lying from spite. I was simply amusing myself with the petitioners and with the officer, and in reality I never could become spiteful. I was conscious every moment in myself of many, very many elements absolutely opposite to that. I felt them positively swarming in me, these opposite elements. I knew that they had been swarming in me all my life and craving some outlet from me, but I would not let them, would not let them, purposely would not let them come out. They tormented me till I was ashamed: they drove me to convulsions and -- sickened me, at last, how they sickened me! Now, are not you fancying, gentlemen, that I am expressing remorse for something now, that I am asking your forgiveness for something? I am sure you are fancying that ... However, I assure you I do not care if you are. ...\n\nIt was not only that I could not become spiteful, I did not know how to become anything; neither spiteful nor kind, neither a rascal nor an honest man, neither a hero nor an insect. Now, I am living out my life in my corner, taunting myself with the spiteful and useless consolation that an intelligent man cannot become anything seriously, and it is only the fool who becomes anything. Yes, a man in the nineteenth century must and morally ought to be pre-eminently a characterless creature; a man of character, an active man is pre-eminently a limited creature. That is my conviction of forty years. I am forty years old now, and you know forty years is a whole lifetime; you know it is extreme old age. To live longer than forty years is bad manners, is vulgar, immoral. Who does live beyond forty? Answer that, sincerely and honestly I will tell you who do: fools and worthless fellows. I tell all old men that to their face, all these venerable old men, all these silver-haired and reverend seniors! I tell the whole world that to its face! I have a right to say so, for I shall go on living to sixty myself. To seventy! To eighty! ... Stay, let me take breath ...\n\nYou imagine no doubt, gentlemen, that I want to amuse you. You are mistaken in that, too. I am by no means such a mirthful person as you imagine, or as you may imagine; however, irritated by all this babble (and I feel that you are irritated) you think fit to ask me who I am -- then my answer is, I am a collegiate assessor. I was in the service that I might have something to eat (and solely for that reason), and when last year a distant relation left me six thousand roubles in his will I immediately retired from the service and settled down in my corner. I used to live in this corner before, but now I have settled down in it. My room is a wretched, horrid one in the outskirts of the town. My servant is an old country- woman, ill-natured from stupidity, and, moreover, there is always a nasty smell about her. I am told that the Petersburg climate is bad for me, and that with my small means it is very expensive to live in Petersburg. I know all that better than all these sage and experienced counsellors and monitors. ... But I am remaining in Petersburg; I am not going away from Petersburg! I am not going away because ... ech! Why, it is absolutely no matter whether I am going away or not going away.\n\nBut what can a decent man speak of with most pleasure?'},
+            {'work':'Montcalm and Wolfe by Francis Park','content':'It is the nature of great events to obscure the great events that came\nbefore them. The Seven Years War in Europe is seen but dimly through\nrevolutionary convulsions and Napoleonic tempests; and the same contest\nin America is half lost to sight behind the storm-cloud of the War of\nIndependence. Few at this day see the momentous issues involved in it,\nor the greatness of the danger that it averted. The strife that armed\nall the civilized world began here. \"Such was the complication of\npolitical interests,\" says Voltaire, \"that a cannon-shot fired in\nAmerica could give the signal that set Europe in a blaze.\" Not quite. It\nwas not a cannon-shot, but a volley from the hunting-pieces of a few\nbackwoodsmen, commanded by a Virginian youth, George Washington.\n\nTo us of this day, the result of the American part of the war seems a\nforegone conclusion. It was far from being so; and very far from being\nso regarded by our forefathers. The numerical superiority of the British\ncolonies was offset by organic weaknesses fatal to vigorous and united\naction. Nor at the outset did they, or the mother-country, aim at\nconquering Canada, but only at pushing back her boundaries.\nCanada -- using the name in its restricted sense -- was a position of great\nstrength; and even when her dependencies were overcome, she could hold\nher own against forces far superior. Armies could reach her only by\nthree routes, -- the Lower St. Lawrence on the east, the Upper St.\nLawrence on the west, and Lake Champlain on the south. The first access\nwas guarded by a fortress almost impregnable by nature, and the second\nby a long chain of dangerous rapids; while the third offered a series of\npoints easy to defend. During this same war, Frederic of Prussia held\nhis ground triumphantly against greater odds, though his kingdom was\nopen on all sides to attack.\n\nIt was the fatuity of Louis XV. and his Pompadour that made the conquest\nof Canada possible. Had they not broken the traditionary policy of\nFrance, allied themselves to Austria, her ancient enemy, and plunged\nneedlessly into the European war, the whole force of the kingdom would\nhave been turned, from the first, to the humbling of England and the\ndefence of the French colonies. The French soldiers left dead on\ninglorious Continental battle-fields could have saved Canada, and\nperhaps made good her claim to the vast territories of the West.\n\nBut there were other contingencies. The possession of Canada was a\nquestion of diplomacy as well as of war. If England conquered her, she\nmight restore her, as she had lately restored Cape Breton. She had an\ninterest in keeping France alive on the American continent. More than\none clear eye saw, at the middle of the last century, that the\nsubjection of Canada would lead to a revolt of the British colonies. So\nlong as an active and enterprising enemy threatened their borders, they\ncould not break with the mother-country, because they needed her help.\nAnd if the arms of France had prospered in the other hemisphere; if she\nhad gained in Europe or Asia territories with which to buy back what she\nhad lost in America, then, in all likelihood, Canada would have passed\nagain into her hands.\n\nThe most momentous and far-reaching question ever brought to issue on\nthis continent was: Shall France remain here, or shall she not? If, by\ndiplomacy or war, she had preserved but the half, or less than the half,\nof her American possessions, then a barrier would have been set to the\nspread of the English-speaking races; there would have been no\nRevolutionary War; and for a long time, at least, no independence. It\nwas not a question of scanty populations strung along the banks of the\nSt. Lawrence; it was -- or under a government of any worth it would have\nbeen -- a question of the armies and generals of France. America owes much\nto the imbecility of Louis XV. and the ambitious vanity and personal\ndislikes of his mistress.\n\nThe Seven Years War made England what she is. It crippled the commerce\nof her rival, ruined France in two continents, and blighted her as a\ncolonial power. It gave England the control of the seas and the mastery\nof North America and India, made her the first of commercial nations,\nand prepared that vast colonial system that has planted new Englands in\nevery quarter of the globe. And while it made England what she is, it\nsupplied to the United States the indispensable condition of their\ngreatness, if not of their national existence.\n\nBefore entering on the story of the great contest, we will look at the\nparties to it on both sides of the Atlantic.'},
+            {'work':'Relativity Paper by Albert Einstein','content':'It is known that Maxwell\'s electrodynamics -- as usually understood at the present time -- when applied to moving bodies, leads to asymmetries which do not appear to be inherent in the phenomena. Take, for example, the reciprocal electrodynamic action of a magnet and a conductor. The observable phenomenon here depends only on the relative motion of the conductor and the magnet, whereas the customary view draws a sharp distinction between the two cases in which either the one or the other of these bodies is in motion. For if the magnet is in motion and the conductor at rest, there arises in the neighbourhood of the magnet an electric field with a certain definite energy, producing a current at the places where parts of the conductor are situated. But if the magnet is stationary and the conductor in motion, no electric field arises in the neighbourhood of the magnet. In the conductor, however, we find an electromotive force, to which in itself there is no corresponding energy, but which gives rise -- assuming equality of relative motion in the two cases discussed -- to electric currents of the same path and intensity as those produced by the electric forces in the former case.\n\nExamples of this sort, together with the unsuccessful attempts to discover any motion of the earth relatively to the \'\'light medium,\'\' suggest that the phenomena of electrodynamics as well as of mechanics possess no properties corresponding to the idea of absolute rest. They suggest rather that, as has already been shown to the first order of small quantities, the same laws of electrodynamics and optics will be valid for all frames of reference for which the equations of mechanics hold good.1 We will raise this conjecture (the purport of which will hereafter be called the \'\'Principle of Relativity\'\') to the status of a postulate, and also introduce another postulate, which is only apparently irreconcilable with the former, namely, that light is always propagated in empty space with a definite velocity c which is independent of the state of motion of the emitting body. These two postulates suffice for the attainment of a simple and consistent theory of the electrodynamics of moving bodies based on Maxwell\'s theory for stationary bodies. The introduction of a \'\'luminiferous ether\'\' will prove to be superfluous inasmuch as the view here to be developed will not require an \'\'absolutely stationary space\'\' provided with special properties, nor assign a velocity-vector to a point of the empty space in which electromagnetic processes take place.\n\nThe theory to be developed is based -- like all electrodynamics -- on the kinematics of the rigid body, since the assertions of any such theory have to do with the relationships between rigid bodies (systems of co-ordinates), clocks, and electromagnetic processes. Insufficient consideration of this circumstance lies at the root of the difficulties which the electrodynamics of moving bodies at present encounters.\n\nI. KINEMATICAL PART\n\nÂ§ 1. Definition of Simultaneity\n\nLet us take a system of co-ordinates in which the equations of Newtonian mechanics hold good.2 In order to render our presentation more precise and to distinguish this system of co-ordinates verbally from others which will be introduced hereafter, we call it the \'\'stationary system.\'\'\n\nIf a material point is at rest relatively to this system of co-ordinates, its position can be defined relatively thereto by the employment of rigid standards of measurement and the methods of Euclidean geometry, and can be expressed in Cartesian co-ordinates.\n\nIf we wish to describe the motion of a material point, we give the values of its co-ordinates as functions of the time. Now we must bear carefully in mind that a mathematical description of this kind has no physical meaning unless we are quite clear as to what we understand by \'\'time.\'\' We have to take into account that all our judgments in which time plays a part are always judgments of simultaneous events. If, for instance, I say, \'\'That train arrives here at 7 o\'clock,\'\' I mean something like this: \'\'The pointing of the small hand of my watch to 7 and the arrival of the train are simultaneous events.\'\'3\n\nIt might appear possible to overcome all the difficulties attending the definition of \'\'time\'\' by substituting \'\'the position of the small hand of my watch\'\' for \'\'time.\'\' And in fact such a definition is satisfactory when we are concerned with defining a time exclusively for the place where the watch is located; but it is no longer satisfactory when we have to connect in time series of events occurring at different places, or -- what comes to the same thing -- to evaluate the times of events occurring at places remote from the watch.\n\nWe might, of course, content ourselves with time values determined by an observer stationed together with the watch at the origin of the co-ordinates, and co-ordinating the corresponding positions of the hands with light signals, given out by every event to be timed, and reaching him through empty space. But this co-ordination has the disadvantage that it is not independent of the standpoint of the observer with the watch or clock, as we know from experience. We arrive at a much more practical determination along the following line of thought.\n'},
+            {'work':'The Battle of Dun Nechtain, By Wikipedia','content':'\n             \nBattle of Dun Nechtain - Wikipedia, the free encyclopedia \n \n           \n      Battle of Dun Nechtain \n       \n       \n       \n         \n        From Wikipedia, the free encyclopedia \n         \n         \n          (Redirected from Battle of Dunnichen) \n         \n                                 \n         \n          Jump to: navigation,\n          search \n         \n         \n                 \n         \n \nBattle of Dun Nechtain \n \n \nPart of the Pictish-Northumbrian conflicts \n \n \nPictish symbol stone depicting what has been generally accepted to be the Battle. \n \n\n \nDate \n20 May 685 \n  \nLocation \ntraditionally near Dunnichen, Angus; alternatively, near Dunachton, Badenoch. \n \nResult \nPictish victory \n \nBelligerents \n \n \nPicts \nNorthumbrians \n \n \nCommanders and leaders \n \n \nBridei III \nEcgfrith &#160; † \n \n \nThe Battle of Dun Nechtain or Battle of Nechtansmere (Scottish Gaelic: Blàr Dhùn Neachdain, Old Irish: Dún Nechtain, Old Welsh: Linn Garan, Old English: Nechtansmere) was fought between the Picts, led by King Bridei Mac Bili, and the Northumbrians, led by King Ecgfrith on 20 May 685. \nThe Northumbrian hegemony over Northern Britain, won by Ecgfrith\'s predecessors, had begun to disintegrate. Several of Northumbria\'s subject nations had rebelled in recent years, leading to a number of large-scale battles against the Picts, Mercians, and Irish, with varied success. Following sieges on neighbouring territories carried out by the Picts, Ecgfrith led his forces against them, despite advice to the contrary, in an effort to reassert his suzerainty over the Pictish nations. \nA feigned retreat by the Picts drew the Northumbrians into an ambush at Dun Nechtain near the lake of Linn Garan. The battle site has long been thought to have been near the present-day village of Dunnichen in Angus. Recent research, however, has suggested a more northerly location near Dunachton, on the shores of Loch Insh in Badenoch and Strathspey. \nThe battle ended with a decisive Pictish victory which severely weakened Northumbria\'s power in northern Britain. Ecgfrith was killed in battle, along with the greater part of his army. The Pictish victory marked their independence from Northumbria, who never regained their dominance in the north. \n \n \nContents \n \n \n1 Background \n2 Account of the battle \n3 Location \n \n3.1 Dunnichen \n3.2 Dunachton \n \n \n4 Aftermath \n5 Notes \n6 References \n7 External links \n \n \n[edit] Background \nDuring the seventh century, the Northumbrians gradually extended their territory to the north. The Annals of Tigernach record a siege of \"Etain\" in 638,[1] which has been interpreted as Northumbria\'s conquest of Din Eidyn (Edinburgh) during the reign of Oswald, marking the annexation of Gododdin territories to the south of the River Forth.[2] \nTo the north of the Forth, the Pictish nations consisted at this time of the kingdom of Fortriu to the north of the Mounth, and a \"Southern Pictish Zone\" between there and the Forth.[3] Evidence from the eighth century Anglo-Saxon historian, Bede points to the Picts also being subjugated by the Northumbrians during Oswald\'s reign,[4] and that this subjugation continued into the reign of his successor, Oswiu.[5] \nEcgfrith succeeded Oswiu as king of Northumbria in 670. Soon after, the Picts rose in rebellion against Northumbrian subjugation at the Battle of Two Rivers, recorded in the 8th century by Stephen of Ripon, hagiographer of Wilfrid.[6] Ecgfrith was aided by a sub-king, Beornhæth, who may have been a leader of the Southern Picts,[7] and the rebellion ended in disaster for the Northern Picts of Fortriu. Their king, Drest mac Donuel, was deposed and was replaced by Bridei mac Bili.[8] \nBy 679, the Northumbrian hegemony was beginning to fall apart. The Irish annals record a Mercian victory over Ecgfrith at which Ecgfrith\'s brother, Ælfwine of Deira was killed.[9] Sieges were recorded at Dunnottar, in the northern-most region of the \"Southern Pictish Zone\" near Stonehaven in 680 and at Dundurn in Strathearn in 682.[10] The antagonists in these sieges are not recorded, but the most reasonable interpretation is thought to be that Bridei\'s forces were the assailants.[11] \nBridei is also recorded as having \"destroyed\" the Orkney Islands in 681,[12] at a time when the Northumbrian church was undergoing major religious reform. They had followed the traditions of the Columban church of Iona until 664 when it pledged loyalty to the Roman Church following the Synod of Whitby. The Northumbrian diocese was divided and a number of new episcopal sees created. One of these was founded at Abercorn on the south coast of the Firth of Forth, and Trumwine was consecrated as Bishop of the Picts. Bridei, who was enthusiastiacally involved with the church of Iona,[13] is unlikely to have viewed an encroachment of the Northumbrian-sponsored Roman church favourably.[14] \nThe attacks on the Southern Pictish Zone at Dunnottar and Dundurn represented a major threat to Ecgfrith\'s suzerainty.[15] Ecgfrith was contending with other challenges to his overlordship. In June 684, countering a Gaelic-Briton alliance, he sent his armies, led by Berhtred, son of Beornhæth, to Brega in Ireland. Ecgfrith\'s force decimated the local population and destroyed many churches, actions which are treated with scorn by Bede.[16] \n[edit] Account of the battle \n \n \n\"[T]he very next year [685AD], that same king [Egfrid], rashly leading his army to ravage the province of the Picts, much against the advice of his friends, and particularly of Cuthbert, of blessed memory, who had been lately ordained his op, the enemy made show as if they fled, and the king was drawn into the straits of inaccessible mountains, and slain with the greatest part of his forces, on the 20th of May, in the fortieth year of his age, and the fifteenth of his reign.\" \n \n \n— Bede\'s account of battle from his Ecclesiastical History of England.[17] \n \n \nWhile none of the historical sources explicitly state Ecgfrith\'s reason for attacking Fortriu in 685, the consensus is that it was to reassert Northumbria\'s eroded hegemony over the Picts.[18] The most thorough description of the battle is given by Bede in his 8th century work Historia ecclesiastica gentis Anglorum (The Ecclesiastical History of the English People) (completed c731), but this is still brief. Additional detail is given in the Irish annals of Ulster and Tigernach, and by the early Welsh historian Nennius in his Historia Brittonum (written c830).[19] \nEcgfrith\'s attack on Fortriu was made against the counsel of his advisors, including Cuthbert, who had recently been made Bishop of Lindisfarne. The Picts under leadership of Bridei, feigned retreat and drew Ecgfrith\'s Northumbrian force into an ambush on Saturday 20 May 685 at the lake of Linn Garan, in mountains near Duin Nechtain. The Northumbrian army was shattered and Ecgfrith slain.[19] \n[edit] Location \n \n \n\"Egfrid is he who made war against his cousin Brudei, king of the Picts, and he fell therein with all the strength of his army and the Picts with their king gained the victory; and the Saxons never again reduced the Picts so as to exact tribute from them. Since the time of this war it is called Gueith Lin Garan.\" \n \n \n— Nennius\' account of battle from Historia Brittonum.[20] \n \n \nThe site of the battle is uncertain. Until relatively recently the battle was most commonly known by its Northumbrian name, the Battle of Nechtansmere, from the Old English for \'Nechtan\'s lake\', following 12th century English historian Symeon of Durham.[21] The location of the battle near a lake is reinforced by Nennius\' record of the conflict as Gueith Linn Garan, Old Welsh for \'Battle of Crane Lake\'. It is likely that Linn Garan was the original Pictish name for the lake.[22] \nThe most complete narrative of the battle itself is given by Bede, who nevertheless fails to inform us of the location other than his mention that it took place \'in straits of inaccessible mountains\'.[23] \nThe Irish Annals have provided perhaps the most useful resource for identifying the battle site, giving the location as Dún Nechtain, \'Nechtan\'s Fort\', a name that has survived into modern usage in two separate instances.[24] \n[edit] Dunnichen \n \n \n\"The battle of Dún Nechtain was fought on Saturday, May 20th, and Egfrid son of Oswy, king of the Saxons, who had completed the 15th year of his reign, was slain therein with a great body of his soldiers[...]. \n \n \n— Account of battle from the Annals of Ulster.[25] \n \n \n\"Cath Duín Nechtain uicesimo die mensis Maii, sabbati die factum est, in quo Ecfrith mac Osu, rex Saxonum, quinto decimo anno reighní suí consummato, magna cum caterua militum suorum interfectus est la Bruidhi mac Bili regis Fortrenn.\" \n \n \n— Account of battle from the Annals of Tigernach.[26] \n \n \nDunnichen in Angus was first identified as a possible location for the battle by antiquarian George Chalmers in the early 19th century.[27] Chalmers notes that the name \'Dunnichen\' can be found in early charters of Arbroath Abbey as \'Dun Nechtan\'.[28] He further suggests a site, \'Dunnichen Moss\' (grid reference NO516489), to the east of the village, which he informs us had recently been drained but can be seen in old maps as a small lake.[29] Earlier local tradition, related by Headrick in the Second Statistical Account, claimed that the site was the location of the Battle of Camlann, where King Arthur fought Mordred.[30] \nMore recent suggestions for the battle site include the valley to the north of Dunnichen Hill, centering around Rescobie Loch (grid reference NO512518) and Restenneth Loch (grid reference NO483518), which is now much reduced following drainage in the 18th century.[31] \n \n \n \n \nDunnichen Moss. The body of water to the left is a modern pond \n \n \nThe battle scene inscribed on the Aberlemno kirk yard stone is often cited as evidence for the battle site. This interpretation was made based on the stone\'s proximity to Dunnichen, only 3&#160;miles (5 km) to the north, but while the short distance seems compelling, the stone is unlikely to be any earlier than mid-8th century,[32] and the ornamentation of the stone, including the animal forms used and the style of weaponry depicted, suggests it may be as late as the mid-9th century.[33] Prior to being linked with the Battle of Nechtansmere, the Aberlemno stone had been cited as evidence for the Battle of Barry (now known to be historically inauthentic),[34] and there are a number of other possible interpretations for the carving.[35] \n[edit] Dunachton \n \n \n \n \nLoch Insh, possible site of Linn Garan. Dunachton is to the right of the photograph \n \n \nIn a recently published paper, historian Alex Woolf gives a number of reasons for doubting Dunnichen as the battle site, most notably the lack of \"inaccessible mountains\" in mid-Angus. He makes a compelling case for an alternative site at Dunachton in Badenoch (grid reference NH820047), on the north-western shore of Loch Insh, which shares Dunnichen\'s toponomical origin of Dún Nechtain.[21] James Fraser of Edinburgh University suggests that, while it is too early to discount Dunnichen as a potential battlesite, locating it there requires an amount of \"special pleading\" that Dunachton does not need.[36] \n[edit] Aftermath \nEcgfrith\'s defeat at Dun Nechtain devastated Northumbria\'s power and influence in the North of Britain. Bede recounts that the Picts recovered their lands that had been held by the Northumbrians and Dál Riatan Scots. He goes on to tell how the Northumbrians who did not flee the Pictish territory were killed or enslaved.[23] \nThe Roman diocese of the Picts was abandoned, with Trumwine and his monks fleeing to Whitby, stalling Roman Catholic expansion in Scotland.[23] Reforms were made in the Scottish Church in the 8th century that removed some of the more contentious differences between the Ionan and Roman churches, but it remained outside of the Roman Catholic Communion until the 11th century. \nWhile further battles between the Northumbrians and Picts are recorded, for example in 697 when Beornhæth\'s son Berhtred was killed,[37] the Battle of Dunnichen marks the point in which Pictish independence from Northumbria was permanently secured.[38] \n[edit] Notes \n \n \n \n^ Annals of Tigernach T640.1 \n^ Jackson (1959) \n^ Woolf (2006), Fraser (2009) p184 \n^ Bede, Ecclesiastical History, III: VI (Oswald \"brought under his dominion all the nations and provinces of Britain, which are divided into four languages, viz. the Britons, the Picts, the Scots, and the English.\") \n^ Bede, Ecclesiastical History, III: XXIV Oswiu \"subdued the greater part of the Picts to the dominion of the English\" in 658. \n^ Colgrave (1927) pp41–43 \n^ Fraser (2009) p201 \n^ Cummins (2009) p106; Fraser (2009) pp201–202 \n^ Annals of Ulster U680.4 \n^ Annals of Ulster U681.5; Fraser (2009) p214 Annals of Ulster U.683.3 \n^ Fraser (2009) p207 \n^ Annals of Ulster 682.4; Annals of Tigernach 682.5 \n^ Fraser (2009) p237 \n^ Veitch (1997) \n^ Fraser (2009) p215 \n^ Annals of Ulster U685.2; Annals of Tigernach T685.2; Bede, Ecclesiastical History IV: XXIV; Annals of Clonmacnoise p109 \n^ Bede Ecclesiastical History IV: XXVI \n^ See for example Fraser, p215; Colgrave, p41 \n^ a b Bede, Ecclesiastical History IV:XXVI; Annals of Ulster U686.1; Annals of Tigernach T686.4; Nennius, Historia Brittonum 57 \n^ Nennius, Historia Brittonum, 57. \n^ a b Woolf (2006) \n^ This was originally suggested by Jackson (1963, p40). Although alternative suggestions have been made, the orthodox view is that Jackson was correct in his assessment of Pictish as a Brythonic language (Forsyth, 1997) \n^ a b c Bede, Ecclesiastical History IV: XXVI \n^ Annals of Ulster U686.1; Annals of Tigernach T686.4; Woolf (2006) \n^ Annals of Ulster U686.1 \n^ Annals of Tigernach T686.4 \n^ Woolf (2006); Chalmers (1887) \n^ And spelling variations. See for example: Innes and Chalmers (1843) \n^ Chalmers (1887). The example Chalmers gives is Ainslie\'s map of Forfarshire (1794), which does not show a lake in that position, nor do earlier maps, for example Pont (c 1583–96); Roy (1747–55) \n^ Headrick also mentions Lothius as a protagonist. \nHeadrick, James (1845), \"Parish of Dunnichen\", New Statistical Account of Scotland, http:\/\/books.google.co.uk\/books?id=PqACAAAAMAAJ&amp;pg=PA142, retrieved July 27, 2010&#160; \n^ Woolf (2006); Fraser (2006) pp 68-70 \n^ Cummins (1999) pp 98–103 \n^ Laing (2000) \n^ Mitchel (1792); Crombie (1842); Jervise (1856) It is interesting[citation needed] that Jervise, writing in 1856, recounts Chalmers\' identification of Dunnichen as the battle site, while mentioning, in the same article, the Aberlemno stone solely in relation to the Battle of Barry. \n^ For example, W.A. Cummins suggests the possibility that the stone is a memorial to 9th century Pictish king Óengus mac Fergusa. Cummins (1999) pp 98–103 \n^ Fraser (2009) pp215–216 \n^ Annals of Ulster 698.2 \n^ Bede, Ecclesiastical History IV: XXVI; Colgrave p 43; Cummins (2009) p107; Fraser (2009) p216 \n \n \n \n[edit] References \n \n \nThe Annals of Ulster. CELT: Corpus of Electronic Texts. http:\/\/www.ucc.ie\/celt\/online\/T100001A\/. Retrieved 2009-09-03.&#160; \nThe Annals of Tigernach. CELT: Corpus of Electronic Texts. http:\/\/www.ucc.ie\/celt\/online\/G100002\/. Retrieved 2009-09-03.&#160; \nMurphy, D, ed (1893–95). The Annals of Clonmacnoise. Dublin: Royal Society of Antiquaries of Ireland. http:\/\/www.archive.org\/details\/annalsofclonmacn00royauoft. Retrieved 2009-09-14.&#160; \nAinslie, J (1794). \"Map of the county of Forfar or Shire of Angus\". National Library of Scotland. http:\/\/www.nls.uk\/maps\/joins\/577.html. Retrieved 2009-09-01.&#160; \nBede. \"Ecclesiastical History of England III\". http:\/\/www.fordham.edu\/halsall\/basis\/bede-book3.html. Retrieved 2009-09-06.&#160; \nBede. \"Ecclesiastical History of England IV\". http:\/\/www.fordham.edu\/halsall\/basis\/bede-book4.html. Retrieved 2009-09-06.&#160; \nChalmers, George (1887). Caledonia: or a historical and topographical account of North Britain, from the most ancient to the present times with a dictionary of places chorographical and philological. 1 (new ed.). Paisley: Alex. Gardner. http:\/\/www.archive.org\/stream\/caledoniaorhisto01chal\/caledoniaorhisto01chal_djvu.txt.&#160; \nColgrave, Bertram (1927). The Life of Bishop Wilfrid by Eddius Stephanus. Cambridge: Cambridge University Press. http:\/\/books.google.com\/books?id=XVFkUuN8rVYC&amp;pg=PP1&amp;dq=The+Life+of+Bishop+Wilfrid#v=onepage&amp;q=&amp;f=false.&#160; \nCrombie, J. (1842). The new statistical account of Scotland, Parish of Aberlemno, Forfarshire. http:\/\/books.google.co.uk\/books?id=He81AAAAMAAJ&amp;pg=PA626. Retrieved 2009-02-12.&#160; \nCummins, WA (1999). The Picts and their symbols. Stroud, Gloucester: Sutton Publishing.&#160; \nCummins, WA (2009). The Age of the Picts (2nd ed.). Brimscombe Port Stroud, Gloucester: The History Press.&#160; \nForsyth, K. (1997). Language in Pictland, the case against \'non-Indo-European Pictish\'. Munster: Nodus Publikationen. http:\/\/eprints.gla.ac.uk\/2081\/1\/languagepictland.pdf. Retrieved 2009-01-27.&#160; \nFraser, James E. (2006). The Pictish Conquest: The Battle Of Dunnichen 685 and the Birth of Scotland. Stroud, Gloucester: Tempus.&#160; \nFraser, James E (2009). From Caledonia to Pictland: Scotland to 795. Edinburgh: Edinburgh University Press. http:\/\/books.google.co.uk\/books?id=JaliXwNMpFsC&amp;pg=PA49&amp;dq.&#160; \nInnes, C. and Chalmers, P., ed (1843). Liber S. Thome de Aberbrothoc; Registrorum Abbacie de Aberbrothoc. 1178–1329. Edinburgh: The Bannatyne Club.&#160; \nJackson, Kenneth (1959). \"Edinburgh and the Anglian occupation of Lothian\". In Clemoes, Peter. The Anglo-Saxons: some aspects of their history and culture presented to Bruce Dickins. London: Bowes and Bowes. pp.&#160;35–42.&#160; \nJackson, Kenneth (1963). \"On the Northern British Section in Nennius\". In Chadwick, Nora. Celt and Saxon. Cambridge: Cambridge University Press. http:\/\/books.google.com\/books?id=X_w8AAAAIAAJ&amp;printsec=frontcover&amp;source=gbs_v2_summary_r&amp;cad=0#v=onepage&amp;q=&amp;f=false.&#160; \nJervise, Andrew (1856). \"Notices descriptive of the localities of certain sculptured stone monuments in Forfarshire, &amp;c. (Part I.)\". Proceedings of the Society of Antiquaries of Scotland 2: 187–201. http:\/\/ads.ahds.ac.uk\/catalogue\/adsdata\/PSAS_2002\/pdf\/vol_002\/2_187_201.pdf.&#160; \nLaing, L (2000). \"The Chronology and Context of Pictish Relief Sculpture\". Medieval Archaeology 34: 81–114. http:\/\/ads.ahds.ac.uk\/catalogue\/adsdata\/arch-769-1\/ahds\/dissemination\/pdf\/vol44\/44_081_114.pdf.&#160; \nMitchel, A. (1792). The statistical account of Scotland, Parish of Aberlemno, County of Forfar. http:\/\/books.google.co.uk\/books?id=nPpp6ED8c3EC&amp;pg=PA60. Retrieved 2009-02-12.&#160; \nNennius. \"Historia Brittonum\". http:\/\/www.fordham.edu\/halsall\/basis\/nennius-full.html. Retrieved 2009-08-29.&#160; \nPont, T (c1583–96). \"Lower Angus and Perthshire east of the Tay\". National Library of Scotland. http:\/\/www.nls.uk\/maps\/counties\/detail.cfm?id=289. Retrieved 2009-09-01.&#160; \nRoy, W (1747–55). \"Military Survey of Scotland\". National Library of Scotland. http:\/\/www.nls.uk\/maps\/roy\/index.html. Retrieved 2009-09-01.&#160; \nVeitch, K (1997). \"The Columban Church in northern Britain, 664-717: a reassessment\". Proceedings of the Society of Antiquaries of Scotland 127: 627–647. http:\/\/ads.ahds.ac.uk\/catalogue\/adsdata\/PSAS_2002\/pdf\/vol_127\/127_627_647.pdf.&#160; \nWoolf, Alex (2006). \"Dun Nechtain, Fortriu and the Geography of the Picts\". The Scottish Historical Review 85: 182–201. doi:10.1353\/shr.2007.0029.&#160; \n \n \n[edit] External links \n \nDunnichen Moss as it is now \nThe monument at Dunnichen \nLoch Insh. Dunachton is to the left of the picture \nMountains to south of Loch Insh             \n             \n             '}
+             
+            
+]};
+
+        
+
+        $(document).ready(function() {
+                                     
+            // ** 2    */                   
+            //$("#mainDiv").css("border","solid thin black");
+            //makeBehave(workObject.stuff, {name: "mainDiv"} );
+             
+            //* 3 */
+            makeFrame(workObject.stuff, {name: "mainDiv"}, function() {
+                 
+               makeStyle({name: "mainDiv"});
+                makeBehave(workObject.stuff, {name: "mainDiv"});
+                                     
+            });
+                    /*  0/1*/
+            //makeFrame({name: "mainDiv"}, function() {
+                 
+           //     makeStyle({name: "mainDiv"});
+            //    makeBehave(workObject.stuff, {name: "mainDiv"});
+                                     
+            //});                  
+                                     
+            
+        });
+        
+        
+  
+  
+  
+   function makeFrame(stuff, field, callback){
+    
+    var c = [];
+    
+    //title selector
+    c.push("<select id='works'>");
+    for(var i = 0; i < stuff.length; i++){
+      c.push("<option id='work_" + i + "'>" + stuff[i].work + "</option>");
+    }
+    c.push("</select>");
+    
+    //slider controls
+    c.push("<div class='slider' id='sliderPos'></div>");
+    c.push("<div class='slider' id='sliderRadius'></div>");
+    c.push("<div class='slider' id='sliderDepth'></div>");
+    //specs
+    c.push("<input id='displaySpecs' type='button' value='Specs'/>");
+    c.push("<div id='specs'></div>");
+    
+    //paper
+    c.push("<div id='paperDiv'></div>");
+    
+    
+    
+    $("#" + field.name).append(c.join(''));
+    
+    //create sliders
+    $("#sliderPos").slider({
+      min: 0,
+      max: 100,
+      value: 0,
+      stop:function(event,ui){       
+        changePos(ui.value);        
+      }
+    });
+    
+    $("#sliderRadius").slider({
+      min: 0,
+      max: 100,
+      range: true,
+      value: [0,0],
+      stop:function(event,ui){
+        var index = $(ui.handle).index();
+        //alert(index);
+        if ( index === 1 ) {
+          changeSettings(ui.values[0],"Radius");
+        } else if ( index === 2 ) {
+          changeSettings(ui.values[1],"Radius");
+        }
+        
+      }
+    });
+    
+    $("#sliderDepth").slider({
+      min: 0,
+      max: 100,
+      range: true,
+      value: [0,0],
+      stop:function(event,ui){
+        var index = $(ui.handle).index();
+        //alert(index);
+        if ( index === 1 ) {
+          changeSettings(ui.values[0],"Depth");
+        } else if ( index === 2 ) {
+          changeSettings(ui.values[1],"Depth");
+        } 
+      }
+    });
+    
+    callback();   
+    
+  }
+  function makeStyle(field){
+    
+    $("#" + field.name).css("border","solid thin black");
+    
+    
+    $(".ui-slider").css( { 
+      'height': '20px',
+      'position': 'relative', 
+      'text-align': 'left' 
+    });
+    
+    
+    $(".ui-slider .ui-slider-range").css({ 
+      'position': 'absolute', 
+      'z-index': '1', 
+      'font-size': '.7em', 
+      'display': 'block', 
+      'border': '0',
+      'background-position': '0 0' 
+    });
+    
+    /*
+    $(".ui-slider-horizontal").css( { 'height': '.8em' });
+    
+    $(".ui-slider-horizontal .ui-slider-handle").css( { 
+    'top': '-.3em', 
+    'margin-left': '-.6em'
+  });
+    */
+    
+    $(".ui-slider-horizontal .ui-slider-range").css( { 
+      'top': '0', 
+      'height': '100%' });
+    
+    $(".ui-slider-horizontal .ui-slider-range-min").css( { 'left':' 0' });
+    
+    $(".ui-slider-horizontal .ui-slider-range-max").css( { 'right': '0' });
+    
+    
+    //rounded corners on knob
+    var uicornerallCss = {
+      //'-moz-border-radius' : '4px',
+      //'-webkit-border-radius' : '4px',
+      'border-radius' : '4px',
+      'border-top-left-radius' : '4px 4px',
+      'border-top-right-radius' : '4px 4px',
+      'border-bottom-right-radius' : '4px 4px',
+      'border-bottom-left-radius' : '4px 4px'
+    };
+    $(".ui-corner-all").css(uicornerallCss);
+    
+    //slider tube
+    var uiwidgetcontentCss = {
+      'border' : '1px solid #AAA',
+      'background' : 'white',
+      'color' : 'white'
+    };
+    $(".ui-widget-content").css(uiwidgetcontentCss);
+    
+    //???
+    var uiwidgetCss = {
+      'font-family' : 'Verdana,Arial,sans-serif',
+      'font-size' : '1.1em'
+    };
+    $(".ui-widget").css(uiwidgetCss);
+    
+    //knob border and background  
+    var uiAllCss = {
+      'border' : 'none',
+      'background' : '#e0e0e0',
+      'font-weight' : 'normal',
+      'color' : '#e0e0e0'
+    };
+    $(".ui-state-default, .ui-widget-header").css(uiAllCss);  
+    //.ui-widget-content,.ui-state-default,, .ui-state-default
+    
+    //knob and slider positioning
+    var uiAll2Css = {
+      'top' : '-.3em',
+      'margin-left' : '-.6em',
+      'color' : 'red',
+      'background' : 'red',
+    };
+    //$(".ui-slider-horizontal, .ui-slider-handle").css(uiAll2Css);
+    
+    var uiHandleCss = {
+      'color' : 'black',
+      'background' : 'black'
+    }
+        $(".ui-slider-handle").css(uiHandleCss); 
+    
+    var uiSliderCss = {
+      'color' : 'white',
+      'background' : 'white'
+    }
+        $(".ui-slider-horizontal").css(uiSliderCss);  
+    
+    //appearance of knob
+    var uiAll3Css =  {
+      'position' : 'absolute',
+      'z-index' : '2',
+      'width' : '0.6em',
+      'height' : '0.6em',
+      'cursor' : 'default'
+    };
+    $(".ui-slider, .ui-slider-handle").css(uiAll3Css);
+    
+    
+    
+    $(".slider").css("height","12px");
+    $(".slider").css("position","relative");
+    $(".slider").css("width","100%");
+    
+    
+    $("#paperDiv").css("border","solid thin blue");
+    $("#specs").css("font-size","9pt");
+    $("#specs").css("font-family","Courier");  
+    
+  }
+  
+  function makeBehave(stuff,field){
+    
+    workingText = stuff[0].content;     
+    setText(workingText);
+    
+    $("#works").change(function(){
+      var sel = $("#works option:selected")[0];
+      var id = $(sel).attr("id").substring(5);
+      workingText = stuff[id].content;     
+      setText(workingText);
+      
+    });
+    
+    
+    $("#specs").hide(); 
+    $("#displaySpecs").click(function(){
+      $("#specs").show();     
+    });
+    $("#specs").dblclick(function(){
+      $("#specs").hide();     
+    });
+    
+    if(init){
+      
+      Raphael.el.removeMe = function () {
+        this.remove();
+      };
+      //paper = Raphael(field.name, getClientCoords().w, getClientCoords().h);
+      paper = Raphael("paperDiv", getClientCoords().w, 400);
+      
+      $('#paperDiv').click(function(e){
+        
+        //var test_blk = paper.rect(10, 10, 10, 10);   
+        
+      });
+      
+      drawEnv = {
+        totalWidth : getClientCoords().w - 300,
+        charWidth : Math.floor(7 * scale),     
+        lineHeight : Math.floor(14 * scale),
+        lineBreak : Math.floor(7 * scale),      
+        wordSpace : Math.floor(7 * scale) 
+      };
+      
+      
+      
+      init = false;      
+    }
+    
+  }
+  
+  function getClientCoords(){      
+    return {w:$("#paperDiv").width(), h:$("#paperDiv").height()};       
+  }
+  
+  function setText(workingText){
+    textArray = workingText.split(/\s+/g);
+    words = [];
+    for(var x = 0; x < textArray.length; x++){
+      var word = {};
+      if( textArray[x]){
+        word.index = x; 
+        word.baseText = textArray[x];
+        word.clearText = textArray[x].replace(/[^a-zA-Z0-9]+/g,'');
+        word.length = textArray[x].length;
+        word.freq = 0;
+      }
+      words.push(word);
+    }
+  }
+  
+  function changePos(val){        
+    currPos = val;
+    currRadiusMin = currPos - currRadius;
+    currRadiusMax = currPos + currRadius;
+    currDepthMin = currPos - currDepth;
+    currDepthMax = currPos + currDepth;
+    resetSliders();
+    analyzeText();      
+  }
+  
+  function changeSettings(val,which){
+    if(which == "Radius"){
+      currRadius = Math.abs(currPos - val);
+      if(currDepth > currRadius) currDepth = currRadius;
+    }else if(which == "Depth"){
+      currDepth = Math.abs(currPos - val);
+      if(currDepth > currRadius) currRadius = currDepth;
+    }      
+    currRadiusMin = currPos - currRadius;
+    currRadiusMax = currPos + currRadius;
+    currDepthMin = currPos - currDepth;
+    currDepthMax = currPos + currDepth;    
+    resetSliders();
+    analyzeText();  
+  }
+  
+  function resetSliders(){
+    $("#sliderRadius").slider("option", "values", [currRadiusMin,currRadiusMax]);
+    $("#sliderDepth").slider("option", "values", [currDepthMin,currDepthMax]); 
+  }
+  
+  
+  function analyzeText(){   
+    
+    var lenText = textArray.length;
+    var pos = currPos; 
+    var posText = Math.floor(lenText * (pos / 100)); 
+    var posTextFinal = (posText < 0 ? 0 : posText);
+    posTextFinal = (posTextFinal > lenText - 1 ? lenText - 1 : posTextFinal);
+    var dia = currRadius * 2;
+    var diaText = Math.floor(lenText * (dia / 100));
+    var rad = currRadius;
+    var radText = Math.floor(lenText * (rad / 100));
+    var radTextStart = posText - radText;
+    var radTextStop = posText + radText;
+    var radTextStartFinal = (radTextStart < 0 ? 0 : radTextStart);
+    var radTextStopFinal = (radTextStop >  lenText - 1 ? lenText - 1 : radTextStop);    
+    var radNum = radTextStopFinal - radTextStartFinal;
+    var depth = currDepth;
+    var depthText = Math.floor(lenText * (depth / 100));
+    var positional = (currRadius == currDepth ? true : false);
+    
+    var v = [];
+    v.push("SPECS:");
+    v.push("Full text contains " + lenText + " words");  
+    v.push("Position set to " + pos + "%. Center on word " + posText + " [" + posTextFinal + "]");  
+    v.push("Radius set to " + rad + "%. Analyze " + radText + " words both ways.");
+    v.push("Start at word (" + posText + " - " + radText + " = " + radTextStart + ") [" + radTextStartFinal + "]");
+    v.push("Stop at word " + radTextStop + " [" + radTextStopFinal + "]"); 
+    v.push("Depth set to " + depth + "%. Print " + depthText + " words.");   
+    if(positional){
+      v.push("Display in the normal, positional, manner.");
+    }else{
+      v.push("Display the top " + depthText + " non-trivial words ranked by score.");
+    }    
+    $("#specs").empty().append(v.join('<br/>'));
+    
+    var limit = 0;
+    
+    var wordsSlice = words;
+    var wordsSlice = wordsSlice.slice(radTextStartFinal,radTextStopFinal);
+    
+    if(positional){
+      
+      resetPaperBlocks();
+      setBlocks(wordsSlice,"base");      
+      drawBlocks();
+      
+    }else{
+      
+      //make the hash to consolidate same words
+      var hash = new Object();
+      
+      for(var i = 0; i < wordsSlice.length; i++){
+        var key = wordsSlice[i].clearText;
+        
+        if(hash[key]){
+          hash[key].freq = hash[key].freq + 1;  
+        }else{
+          hash[key] = wordsSlice[i];
+          hash[key].freq = 1;
+        }
+        
+      }      
+      //make and sort an array
+      var arr = [];
+      for(var key in hash){       
+        var wd = hash[key];
+        var score = scoreWord(wd.clearText,wd.freq,wd.length);
+        arr.push(score + ":" + wd.clearText);      
+      }      
+      arr.sort(function(a, b){ var a1 = parseInt(a.split(":")[0]);
+                               var b1 = parseInt(b.split(":")[0]); return (b1-a1);});
+      
+      //output array
+      var wordsSliceMash = [];
+      limit = (arr.length > depthText ? depthText : arr.length);
+      for(var j = 0; j < limit; j++){       
+        var key = arr[j].split(":")[1];
+        $.trim(key);              
+        wordsSliceMash.push(hash[key]);        
+      }     
+      resetPaperBlocks();
+      setBlocks(wordsSliceMash, "clear");      
+      drawBlocks();      
+    }
+  }
+  
+  function resetPaperBlocks(){
+    paper.clear();
+    Blocks = [];   
+    
+  }
+  
+  function drawBlocks(){
+    
+    var myBlk = {};
+    var myScale = 1.2;//parseFloat(prompt("Scale"));
+    //this should print all Blocks
+    for(var x = 0; x < Blocks.length; x+=1){
+      
+      myBlk = Blocks[x];
+      myBlk.setScale(myScale,myScale);
+      myBlk.draw();
+      myBlk.print();         
+      
+    } 
+  }
+  
+  function setBlocks(wordsArray,wordType){
+    
+    var c = [];
+    
+    var x0 = 0.0;
+    var y0 = 0.0;
+    var h0 = 0.0;
+    var w0 = 0.0;
+    var clr = "#e0e0e0";
+    
+    var w;
+    
+    for(var x=0;x<wordsArray.length;x+=1){
+      
+      w = wordsArray[x];
+      var useWord = (wordType=="base" ? w.baseText : w.clearText);
+      var wid = w.length * drawEnv.charWidth;
+      var myBlk = new Block(x0,y0,wid,drawEnv.lineHeight,clr,useWord); 
+      Blocks.push(myBlk);
+      
+      //recalc positions
+      //console.log(x0,w.textlen * drawEnv.charWidth,drawEnv.wordSpace);
+      x0 = x0 + wid + drawEnv.wordSpace;
+      if(x0 > drawEnv.totalWidth){
+        x0 = 0.0;
+        y0 = y0 + drawEnv.lineHeight + drawEnv.lineBreak;
+      }
+      
+    }            
+    
+    //start a para
+    
+    //y0 = y0 + (x0!=0.0 ? 2 : 1) * (drawEnv.lineBreak + drawEnv.lineHeight);  
+    //x0 = 0.0;
+  }   
+  
+  var Block = function(x0,y0,w0,h0,clr,txt){          
+    
+    this.X = x0;
+    this.Y = y0;
+    this.W = w0;  
+    this.H = h0;
+    this.Clr = clr;
+    this.Txt = txt;
+    this.Xscale = 1.0;
+    this.Yscale = 1.0;
+    this.Xtrans = 12.0;
+    this.Ytrans = 12.0;
+    
+  };
+  Block.prototype.draw = function(){
+    var blk = paper.rect(this.X, this.Y, this.W, this.H);
+    var blkclr = this.Clr;
+    
+    blk.attr("stroke", blkclr);
+    blk.attr("fill", blkclr); 
+    
+    blk.translate(this.Xtrans,this.Ytrans);
+    ///blk.scale(this.Xscale,this.Yscale,0.0,0.0);
+  };
+  Block.prototype.print = function(){
+    var ptFont =  Math.floor((this.H*this.Xscale)-2.5);
+    if(ptFont > 5){
+      var lbl = paper.text(this.X + (this.W/2), this.Y + (this.H/2), this.Txt);
+      //lbl.attr({"font-weight":"normal"});
+      lbl.attr({"font-size":ptFont+"pt"});
+      lbl.attr({"font-family":"Courier"});
+      //lbl.attr({"stroke":"black"});  
+      lbl.translate(this.Xtrans,this.Ytrans);
+      ////lbl.scale(this.Xscale,this.Yscale,0.0,0.0);
+    }
+  };
+  Block.prototype.setScale = function(x,y){ 
+    this.Xscale = x;
+    this.Yscale = y;
+  };  
+  
+  
+  function scoreWord(word,freq,length){
+    
+    //return toward 1000 if non-trivial, 1-20 if trivial
+    
+    if($.trim(word).length ==0) return calcScore(0);
+    
+    //articles and pronouns
+    var APn = "|the|a|an|this|those|these|that|";
+    if (APn.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(1);
+    
+    //conjunction
+    var Cnj = "|also|if|and|but|or|yet|nor|so|maybe|";  
+    if (Cnj.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(2); 
+    
+    //personal pronouns
+    var PPn = "|i|me|my|mine|myself|we|us|our|ours|you|your|he|she|him|her|his|hers|they|them|their|theirs|it|its|";
+    if (PPn.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(3); 
+    
+    //linking verbs
+    var Lvb = "|is|am|are|be|was|were|been|has|had|have|do|did|does|able|can|could|shall|should|will|would|may|might|must|owe|ought|";
+    if (Lvb.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(4); 
+    
+    //prepositions
+    var Prp = "|at|on|to|through|about|against|off|out|by|under|from|with|in|into|within|for|of|than|";
+    if (Prp.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(5); 
+    
+    //adverbs   
+    var Adv0 = "|there|then|when|what|why|which|who|while|how|";
+    if (Adv0.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(6);
+    
+    var Adv1 = "|each|both|any|only|such|anything|another|thus|though|as|not|no|either|neither|again|same|";
+    if (Adv1.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(6); 
+    
+    var Adv2 = "|first|last|half|far|near|even|now|all|more|some|greater|every|very|";    
+    if (Adv2.indexOf("|" + $.trim(word).toLowerCase() + "|")>=0) return calcScore(6); 
+    
+    //word class 
+    return calcScore(1000);
+    
+    function calcScore(wordClass){
+      return wordClass * ((freq * 100) + length); 
+      
+    }
+    
+  }
+  
+  
+  
+        
+        
+    
+    </script>
+    
+    
+    
+    
+</head>
+<body>
+
+    <div id="mainDiv" style="height: 1000px"></div>
+    
+    
+</body>
+
+
+</html>
